@@ -600,7 +600,7 @@ public:
         sb(lfGainK, 262,y+798,88,88); sb(lfFreqK, 376,y+736,88,88); sb(lfBellB, 388,y+860,66,31);
 
         sb(outFader, 526,y+210,44,466); sb(mInB, 620,y+152,39,30); sb(mOutB, 661,y+152,39,30);
-        meterRect = { static_cast<int>(std::round(610 * sc)), static_cast<int>(std::round((y + 210) * sc)), static_cast<int>(std::round(102 * sc)), static_cast<int>(std::round(466 * sc)) }
+        meterRect = { static_cast<int>(std::round(610 * sc)), static_cast<int>(std::round((y + 210) * sc)), static_cast<int>(std::round(102 * sc)), static_cast<int>(std::round(466 * sc)) };
         sb(widthK, 510,y+742,86,86); sb(xWideB, 632,y+741,66,34); sb(wFiltB, 632,y+789,66,34);
     }
 
