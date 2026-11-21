@@ -491,7 +491,7 @@ public:
 
         addAndMakeVisible(scaleBox);
         scaleBox.addItem("75%", 75); scaleBox.addItem("90%", 90); scaleBox.addItem("100%", 100); scaleBox.addItem("125%", 125); scaleBox.addItem("150%", 150);
-        scaleBox.setSelectedId(75, juce::dontSendNotification);
+        scaleBox.setSelectedId(100, juce::dontSendNotification);
         scaleBox.onChange = [this] { applyScale(static_cast<float>(scaleBox.getSelectedId()) / 100.0f); };
 
         mkKn(lineK, SolarSSL::KnobStyle::FlutedGold, "line_trim", "-20,,0,,+20");
@@ -543,7 +543,11 @@ public:
         bAtt("lf_bell", lfBellB); sAtt("lf_gain", lfGainK); sAtt("lf_freq", lfFreqK);
         sAtt("output_gain", outFader); sAtt("width", widthK); bAtt("extra_wide", xWideB); bAtt("width_filter", wFiltB);
 
-        applyScale(0.75f);
+        setResizable(true, true);
+        setResizeLimits(360, 475, 1440, 1900);
+        if (auto* c = getConstrainer())
+             c->setFixedAspectRatio(720.0 / 950.0);
+        setSize(720, 950);
         startTimerHz(30);
     }
 
@@ -551,7 +555,6 @@ public:
 
     void applyScale(float sc)
     {
-        setTransform(juce::AffineTransform::scale(sc));
         setSize(static_cast<int>(std::round(720.0f * sc)), static_cast<int>(std::round(950.0f * sc)));
     }
 
@@ -575,32 +578,36 @@ public:
 
     void resized() override
     {
-        presetBox.setBounds(8,8,210,26); saveBtn.setBounds(224,8,46,26); loadBtn.setBounds(274,8,46,26);
-        slotABtn.setBounds(330,8,28,26); slotBBtn.setBounds(361,8,28,26); copyBtn.setBounds(392,8,42,26);
-        undoBtn.setBounds(444,8,44,26); redoBtn.setBounds(491,8,44,26); extScBtn.setBounds(544,8,56,26);
-        midiBtn.setBounds(604,8,42,26); scaleBox.setBounds(650,8,62,26);
+        const float sc = static_cast<float>(getWidth()) / 720.0f;
+        auto sb = [&](juce::Component& comp, int bx, int by, int bw, int bh) { comp.setBounds(static_cast<int>(std::round(bx * sc)), static_cast<int>(std::round(by * sc)), static_cast<int>(std::round(bw * sc)), static_cast<int>(std::round(bh * sc))); };
+        sb(presetBox, 8,8,210,26); sb(saveBtn, 224,8,46,26); sb(loadBtn, 274,8,46,26);
+        sb(slotABtn, 330,8,28,26); sb(slotBBtn, 361,8,28,26); sb(copyBtn, 392,8,42,26);
+        sb(undoBtn, 444,8,44,26); sb(redoBtn, 491,8,44,26); sb(extScBtn, 544,8,56,26);
+        sb(midiBtn, 604,8,42,26); sb(scaleBox, 650,8,62,26);
         const int y = 42;
-        lineK.setBounds(14,y+10,88,88); micK.setBounds(14,y+114,88,88);
-        analogB.setBounds(138,y+18,68,31); padB.setBounds(138,y+62,68,31); phaseB.setBounds(138,y+106,68,31);
-        dynBypB.setBounds(130,y+192,36,52); chOutB.setBounds(170,y+192,36,52);
-        cRatioK.setBounds(14,y+236,88,88); cThreshK.setBounds(124,y+304,88,88); cRelK.setBounds(14,y+364,88,88); cFatkB.setBounds(58,y+462,46,18);
-        eThreshK.setBounds(124,y+426,88,88); eRangeK.setBounds(14,y+482,88,88); gateB.setBounds(138,y+530,66,30); eRelK.setBounds(14,y+602,88,88); eFatkB.setBounds(58,y+698,46,18);
-        hpfK.setBounds(16,y+742,88,88); lpfK.setBounds(126,y+798,88,88); splitB.setBounds(26,y+860,64,31);
+        sb(lineK, 14,y+10,88,88); sb(micK, 14,y+114,88,88);
+        sb(analogB, 138,y+18,68,31); sb(padB, 138,y+62,68,31); sb(phaseB, 138,y+106,68,31);
+        sb(dynBypB, 130,y+192,36,52); sb(chOutB, 170,y+192,36,52);
+        sb(cRatioK, 14,y+236,88,88); sb(cThreshK, 124,y+304,88,88); sb(cRelK, 14,y+364,88,88); sb(cFatkB, 58,y+462,46,18);
+        sb(eThreshK, 124,y+426,88,88); sb(eRangeK, 14,y+482,88,88); sb(gateB, 138,y+530,66,30); sb(eRelK, 14,y+602,88,88); sb(eFatkB, 58,y+698,46,18);
+        sb(hpfK, 16,y+742,88,88); sb(lpfK, 126,y+798,88,88); sb(splitB, 26,y+860,64,31);
 
-        brownB.setBounds(326,y+30,33,58); blackB.setBounds(364,y+30,33,58); soloB.setBounds(388,y+124,66,31);
-        hfBellB.setBounds(388,y+180,66,31); hfGainK.setBounds(262,y+170,88,88); hfFreqK.setBounds(376,y+238,88,88);
-        hmfGainK.setBounds(262,y+306,88,88); hmfFreqK.setBounds(376,y+368,88,88); hmfQK.setBounds(262,y+432,88,88);
-        eqBypB.setBounds(382,y+494,36,52); dynScB.setBounds(422,y+494,36,52);
-        lmfGainK.setBounds(262,y+540,88,88); lmfFreqK.setBounds(376,y+600,88,88); lmfQK.setBounds(262,y+668,88,88);
-        lfGainK.setBounds(262,y+798,88,88); lfFreqK.setBounds(376,y+736,88,88); lfBellB.setBounds(388,y+860,66,31);
+        sb(brownB, 326,y+30,33,58); sb(blackB, 364,y+30,33,58); sb(soloB, 388,y+124,66,31);
+        sb(hfBellB, 388,y+180,66,31); sb(hfGainK, 262,y+170,88,88); sb(hfFreqK, 376,y+238,88,88);
+        sb(hmfGainK, 262,y+306,88,88); sb(hmfFreqK, 376,y+368,88,88); sb(hmfQK, 262,y+432,88,88);
+        sb(eqBypB, 382,y+494,36,52); sb(dynScB, 422,y+494,36,52);
+        sb(lmfGainK, 262,y+540,88,88); sb(lmfFreqK, 376,y+600,88,88); sb(lmfQK, 262,y+668,88,88);
+        sb(lfGainK, 262,y+798,88,88); sb(lfFreqK, 376,y+736,88,88); sb(lfBellB, 388,y+860,66,31);
 
-        outFader.setBounds(526,y+210,44,466); mInB.setBounds(620,y+152,39,30); mOutB.setBounds(661,y+152,39,30);
-        meterRect = {610,y+210,102,466};
-        widthK.setBounds(510,y+742,86,86); xWideB.setBounds(632,y+741,66,34); wFiltB.setBounds(632,y+789,66,34);
+        sb(outFader, 526,y+210,44,466); sb(mInB, 620,y+152,39,30); sb(mOutB, 661,y+152,39,30);
+        };meterRect = { static_cast<int>(std::round(610 * sc)), static_cast<int>(std::round((y + 210) * sc)), static_cast<int>(std::round(102 * sc)), static_cast<int>(std::round(466 * sc)) }
+        sb(widthK, 510,y+742,86,86); sb(xWideB, 632,y+741,66,34); sb(wFiltB, 632,y+789,66,34);
     }
 
     void paint(juce::Graphics& g) override
     {
+        const float sc = static_cast<float>(getWidth()) / 720.0f;
+        g.addTransform(juce::AffineTransform::scale(sc));
         const int y = 42;
         g.setColour(juce::Colour(0xff181108)); g.fillRect(0, 0, 720, y);
         g.setColour(juce::Colour(0xffa9823a)); g.drawHorizontalLine(y - 1, 0.0f, 720.0f);
