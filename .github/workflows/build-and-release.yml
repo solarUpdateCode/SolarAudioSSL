@@ -62,7 +62,7 @@ jobs:
         run: >
           cmake --build build --config Release
           --target SolarAudioSSL_AU SolarAudioSSL_VST3 SolarAudioSSL_Standalone
-          -- -j
+          --parallel
 
       - name: Verify Universal Binaries & AU Validation
         run: |
