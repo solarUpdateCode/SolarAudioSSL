@@ -45,47 +45,77 @@ public:
         setColour(juce::PopupMenu::highlightedTextColourId, juce::Colours::white);
     }
 
+    static void drawEmbossedText(juce::Graphics& g, const juce::String& text, juce::Rectangle<int> r,
+                                 float fontSize, juce::Colour faceCol = juce::Colour(0xfffaebbd),
+                                 bool isDarkEngraved = false, juce::Justification just = juce::Justification::centred)
+    {
+        g.setFont(juce::FontOptions(fontSize, juce::Font::bold));
+        g.setColour(juce::Colour(0xfffffce8).withAlpha(isDarkEngraved ? 0.65f : 0.72f));
+        g.drawFittedText(text, r.translated(-1, -1), just, 1);
+        g.setColour(juce::Colour(0xff1b0f03).withAlpha(isDarkEngraved ? 0.42f : 0.85f));
+        g.drawFittedText(text, r.translated(1, 2), just, 1);
+        g.setColour(juce::Colour(0xff3d2608).withAlpha(0.75f));
+        g.drawFittedText(text, r.translated(1, 1), just, 1);
+        g.setColour(faceCol);
+        g.drawFittedText(text, r, just, 1);
+    }
+
     static void drawBrushedGoldPanel(juce::Graphics& g, juce::Rectangle<float> b)
     {
-        juce::ColourGradient grad(juce::Colour(0xffebd398), b.getX(), b.getY(), juce::Colour(0xff785928), b.getRight(), b.getBottom(), false);
-        grad.addColour(0.28, juce::Colour(0xffd0ad66));
-        grad.addColour(0.65, juce::Colour(0xff9c783b));
+        juce::ColourGradient grad(juce::Colour(0xffedd69c), b.getX(), b.getY(), juce::Colour(0xff5e4219), b.getRight(), b.getBottom(), false);
+        grad.addColour(0.26, juce::Colour(0xffd4b16a));
+        grad.addColour(0.58, juce::Colour(0xffa6803d));
+        grad.addColour(0.84, juce::Colour(0xff775724));
         g.setGradientFill(grad);
         g.fillRect(b);
+
+        juce::ColourGradient spotL(juce::Colour(0xfffff6ce).withAlpha(0.42f), b.getX() + 90.f, b.getY() + 40.f,
+                                   juce::Colours::transparentBlack, b.getX() + 340.f, b.getY() + 340.f, true);
+        g.setGradientFill(spotL);
+        g.fillRect(b);
+
         g.setColour(juce::Colours::white.withAlpha(0.032f));
         for (float y = b.getY(); y < b.getBottom(); y += 3.0f) g.drawHorizontalLine(static_cast<int>(y), b.getX(), b.getRight());
         g.setColour(juce::Colours::black.withAlpha(0.035f));
         for (float y = b.getY() + 1.5f; y < b.getBottom(); y += 4.0f) g.drawHorizontalLine(static_cast<int>(y), b.getX(), b.getRight());
+
+        g.setColour(juce::Colour(0xfffff8d6).withAlpha(0.52f));
+        g.drawHorizontalLine(static_cast<int>(b.getY()), b.getX(), b.getRight());
+        g.drawVerticalLine(static_cast<int>(b.getX()), b.getY(), b.getBottom());
+        g.setColour(juce::Colour(0xff1c1104).withAlpha(0.75f));
+        g.drawRect(b.reduced(0.5f), 1.5f);
     }
 
     static void drawJewelLED(juce::Graphics& g, juce::Rectangle<float> r, juce::Colour onCol, bool isOn)
     {
         float cx = r.getCentreX(), cy = r.getCentreY(), rad = std::min(r.getWidth(), r.getHeight()) * 0.5f;
-        g.setColour(juce::Colour(0xff3d2a10));
-        g.fillEllipse(cx - rad - 1.5f, cy - rad - 1.5f, (rad + 1.5f) * 2.0f, (rad + 1.5f) * 2.0f);
+        g.setColour(juce::Colour(0xff33210a));
+        g.fillEllipse(cx - rad - 1.8f, cy - rad - 1.8f, (rad + 1.8f) * 2.0f, (rad + 1.8f) * 2.0f);
+        g.setColour(juce::Colour(0xfff5e0a8).withAlpha(0.38f));
+        g.drawEllipse(cx - rad - 1.8f, cy - rad - 1.8f, (rad + 1.8f) * 2.0f, (rad + 1.8f) * 2.0f, 0.8f);
         if (isOn)
         {
-            juce::ColourGradient glow(onCol.withAlpha(0.65f), cx, cy, onCol.withAlpha(0.0f), cx + rad * 2.4f, cy + rad * 2.4f, true);
+            juce::ColourGradient glow(onCol.withAlpha(0.75f), cx, cy, onCol.withAlpha(0.0f), cx + rad * 2.7f, cy + rad * 2.7f, true);
             g.setGradientFill(glow);
-            g.fillEllipse(cx - rad * 2.2f, cy - rad * 2.2f, rad * 4.4f, rad * 4.4f);
-            juce::ColourGradient lens(onCol.brighter(0.85f), cx - rad * 0.3f, cy - rad * 0.3f, onCol.darker(0.35f), cx + rad, cy + rad, true);
+            g.fillEllipse(cx - rad * 2.5f, cy - rad * 2.5f, rad * 5.0f, rad * 5.0f);
+            juce::ColourGradient lens(onCol.brighter(0.9f), cx - rad * 0.3f, cy - rad * 0.3f, onCol.darker(0.35f), cx + rad, cy + rad, true);
             g.setGradientFill(lens);
         }
         else
         {
-            juce::ColourGradient off(onCol.darker(0.75f), cx - rad * 0.25f, cy - rad * 0.25f, juce::Colour(0xff1c140b), cx + rad, cy + rad, true);
+            juce::ColourGradient off(onCol.darker(0.78f), cx - rad * 0.25f, cy - rad * 0.25f, juce::Colour(0xff160f07), cx + rad, cy + rad, true);
             g.setGradientFill(off);
         }
         g.fillEllipse(cx - rad, cy - rad, rad * 2.0f, rad * 2.0f);
-        g.setColour(juce::Colours::white.withAlpha(isOn ? 0.78f : 0.22f));
+        g.setColour(juce::Colours::white.withAlpha(isOn ? 0.82f : 0.25f));
         g.fillEllipse(cx - rad * 0.45f, cy - rad * 0.5f, rad * 0.45f, rad * 0.35f);
     }
 
     static void drawSunburstLogo(juce::Graphics& g, juce::Rectangle<float> area)
     {
-        auto c = juce::Point<float>(area.getCentreX(), area.getY() + area.getHeight() * 0.34f);
-        float inR = area.getHeight() * 0.14f, outR = area.getHeight() * 0.26f;
-        g.setColour(juce::Colour(0xff9b7433));
+        auto c = juce::Point<float>(area.getCentreX(), area.getY() + area.getHeight() * 0.42f);
+        float inR = area.getHeight() * 0.145f, outR = area.getHeight() * 0.28f;
+        g.setColour(juce::Colour(0xff9b732e).withAlpha(0.78f));
         for (int i = 0; i < 12; ++i)
         {
             float a = static_cast<float>(i) * juce::MathConstants<float>::twoPi / 12.0f;
@@ -96,114 +126,165 @@ public:
             ray.closeSubPath();
             g.fillPath(ray);
         }
-        g.setColour(juce::Colour(0xffb48a40));
+        g.setColour(juce::Colour(0xffb48a40).withAlpha(0.85f));
         g.fillEllipse(c.x - inR, c.y - inR, inR * 2.0f, inR * 2.0f);
         g.setColour(juce::Colour(0xfff6e5b3));
         g.fillEllipse(c.x - inR * 0.72f, c.y - inR * 0.72f, inR * 1.44f, inR * 1.44f);
-        auto ta = area.withTrimmedTop(area.getHeight() * 0.48f);
-        g.setFont(juce::FontOptions(juce::Font::getDefaultSerifFontName(), 22.0f, juce::Font::plain));
-        g.setColour(juce::Colour(0xfff8eab9).withAlpha(0.6f));
-        g.drawFittedText("SolarAudioSSL", ta.translated(0.0f, 1.0f).toNearestInt(), juce::Justification::centred, 1);
-        g.setColour(juce::Colour(0xff7d5b24));
-        g.drawFittedText("SolarAudioSSL", ta.toNearestInt(), juce::Justification::centred, 1);
+
+        auto ta = area.withTrimmedTop(area.getHeight() * 0.28f).toNearestInt();
+        g.setFont(juce::FontOptions(juce::Font::getDefaultSerifFontName(), 24.0f, juce::Font::plain));
+        g.setColour(juce::Colour(0xfffff8db).withAlpha(0.85f));
+        g.drawFittedText("SolarAudioSSL", ta.translated(-1, -1), juce::Justification::centred, 1);
+        g.setColour(juce::Colour(0xff2d1b05).withAlpha(0.65f));
+        g.drawFittedText("SolarAudioSSL", ta.translated(1, 2), juce::Justification::centred, 1);
+        g.setColour(juce::Colour(0xff74521c));
+        g.drawFittedText("SolarAudioSSL", ta, juce::Justification::centred, 1);
     }
 
     static void drawEV2Badge(juce::Graphics& g, juce::Rectangle<float> area)
     {
-        g.setFont(juce::FontOptions(20.0f, juce::Font::bold));
-        g.setColour(juce::Colour(0xff2c1d0a));
-        g.drawFittedText("EV2", area.translated(1.0f, 1.5f).toNearestInt(), juce::Justification::centredRight, 1);
-        g.setColour(juce::Colour(0xffdfc07a));
-        g.drawFittedText("EV2", area.toNearestInt(), juce::Justification::centredRight, 1);
+        auto r = area.toNearestInt();
+        g.setFont(juce::FontOptions(22.0f, juce::Font::bold));
+        g.setColour(juce::Colour(0xfffff6d6).withAlpha(0.75f));
+        g.drawFittedText("EV2", r.translated(-1, -1), juce::Justification::centredRight, 1);
+        g.setColour(juce::Colour(0xff1a0e02).withAlpha(0.9f));
+        g.drawFittedText("EV2", r.translated(2, 3), juce::Justification::centredRight, 1);
+        g.setColour(juce::Colour(0xffe6c77e));
+        g.drawFittedText("EV2", r, juce::Justification::centredRight, 1);
     }
 
     void drawRotarySlider(juce::Graphics& g, int x, int y, int w, int h, float pos, float startA, float endA, juce::Slider& s) override
     {
-        float cx = x + w * 0.5f, cy = y + h * 0.5f, rad = std::min(w, h) * 0.42f;
+        float cx = x + w * 0.5f, cy = y + h * 0.5f, rad = std::min(w, h) * 0.36f;
         float angle = startA + pos * (endA - startA);
         auto style = static_cast<KnobStyle>(static_cast<int>(s.getProperties().getWithDefault("knobStyle", 0)));
+        juce::String tickCsv = s.getProperties().getWithDefault("ticks", "").toString();
 
-        g.setColour(juce::Colour(0xfff6e4b5).withAlpha(0.75f));
-        for (int i = 0; i < 11; ++i)
+        juce::StringArray ticks;
+        if (tickCsv.isNotEmpty()) ticks.addTokens(tickCsv, ",", "");
+        int nTicks = ticks.isEmpty() ? 9 : ticks.size();
+        g.setFont(juce::FontOptions(8.5f, juce::Font::bold));
+        for (int i = 0; i < nTicks; ++i)
         {
-            float ta = startA + (i / 10.0f) * (endA - startA) - juce::MathConstants<float>::halfPi;
-            float r1 = rad + 2.5f, r2 = rad + ((i == 0 || i == 5 || i == 10) ? 6.0f : 4.2f);
-            g.drawLine(cx + std::cos(ta) * r1, cy + std::sin(ta) * r1, cx + std::cos(ta) * r2, cy + std::sin(ta) * r2, 1.1f);
+            float t = (nTicks > 1) ? static_cast<float>(i) / static_cast<float>(nTicks - 1) : 0.5f;
+            float ta = startA + t * (endA - startA) - juce::MathConstants<float>::halfPi;
+            float r1 = rad + 2.2f, r2 = rad + 5.2f;
+            g.setColour(juce::Colour(0xfff9e8b8).withAlpha(0.82f));
+            g.drawLine(cx + std::cos(ta) * r1, cy + std::sin(ta) * r1, cx + std::cos(ta) * r2, cy + std::sin(ta) * r2, 1.0f);
+            if (!ticks.isEmpty() && ticks[i].isNotEmpty())
+            {
+                float lx = cx + std::cos(ta) * (rad + 11.5f);
+                float ly = cy + std::sin(ta) * (rad + 11.5f);
+                juce::Rectangle<int> lr(static_cast<int>(lx - 13), static_cast<int>(ly - 5), 26, 10);
+                g.setColour(juce::Colour(0xff231404).withAlpha(0.8f));
+                g.drawFittedText(ticks[i], lr.translated(1, 1), juce::Justification::centred, 1);
+                g.setColour(juce::Colour(0xfff8e7b8));
+                g.drawFittedText(ticks[i], lr, juce::Justification::centred, 1);
+            }
         }
-        g.setColour(juce::Colours::black.withAlpha(0.45f));
+
+        g.setColour(juce::Colours::black.withAlpha(0.32f));
+        g.fillEllipse(cx - rad + 4.0f, cy - rad + 7.0f, rad * 2.0f, rad * 2.0f);
+        g.setColour(juce::Colours::black.withAlpha(0.55f));
         g.fillEllipse(cx - rad + 2.0f, cy - rad + 3.5f, rad * 2.0f, rad * 2.0f);
 
-        juce::ColourGradient skirt(juce::Colour(0xfff2da99), cx - rad, cy - rad, juce::Colour(0xff593f18), cx + rad, cy + rad, false);
+        juce::ColourGradient skirt(juce::Colour(0xfff7e3a6), cx - rad, cy - rad, juce::Colour(0xff4a3110), cx + rad, cy + rad, false);
         g.setGradientFill(skirt);
         g.fillEllipse(cx - rad, cy - rad, rad * 2.0f, rad * 2.0f);
+        g.setColour(juce::Colour(0xff2e1c07));
+        g.drawEllipse(cx - rad, cy - rad, rad * 2.0f, rad * 2.0f, 1.0f);
+
         for (int i = 0; i < 20; ++i)
         {
             float fa = i * juce::MathConstants<float>::twoPi / 20.0f + angle;
-            g.setColour(juce::Colours::black.withAlpha(0.22f));
-            g.drawLine(cx + std::cos(fa) * rad * 0.78f, cy + std::sin(fa) * rad * 0.78f, cx + std::cos(fa) * rad, cy + std::sin(fa) * rad, 1.2f);
+            g.setColour(juce::Colours::black.withAlpha(0.28f));
+            g.drawLine(cx + std::cos(fa) * rad * 0.76f, cy + std::sin(fa) * rad * 0.76f, cx + std::cos(fa) * rad, cy + std::sin(fa) * rad, 1.25f);
         }
 
-        float capR = rad * 0.78f;
-        juce::Colour cL(0xfff5e0a8), cD(0xff8a672d), ptr(juce::Colours::white);
+        float collarR = rad * 0.81f;
+        g.setColour(juce::Colour(0xff231404).withAlpha(0.65f));
+        g.fillEllipse(cx - collarR, cy - collarR, collarR * 2.0f, collarR * 2.0f);
+
+        float capR = rad * 0.76f;
+        juce::Colour cL(0xfff7e5b0), cD(0xff845f26), ptr(juce::Colours::white);
         switch (style)
         {
-            case KnobStyle::FlutedGold: ptr = juce::Colour(0xff3a260b); break;
-            case KnobStyle::WhiteComp:  cL = juce::Colour(0xfffaf7ef); cD = juce::Colour(0xffc9c2b2); ptr = juce::Colour(0xff2c2214); break;
+            case KnobStyle::FlutedGold: ptr = juce::Colour(0xff342008); break;
+            case KnobStyle::WhiteComp:  cL = juce::Colour(0xfffcfaf2); cD = juce::Colour(0xffc0b8a8); ptr = juce::Colour(0xff2a1e10); break;
             case KnobStyle::GreenExp:
-            case KnobStyle::GreenHMF:   cL = juce::Colour(0xff33ab54); cD = juce::Colour(0xff155c28); break;
-            case KnobStyle::RedHF:      cL = juce::Colour(0xffe03131); cD = juce::Colour(0xff801212); break;
-            case KnobStyle::CyanLMF:    cL = juce::Colour(0xff229cb5); cD = juce::Colour(0xff0d5363); break;
-            case KnobStyle::BrownLF:    cL = juce::Colour(0xff8a461b); cD = juce::Colour(0xff421d08); break;
+            case KnobStyle::GreenHMF:   cL = juce::Colour(0xff35b357); cD = juce::Colour(0xff125422); break;
+            case KnobStyle::RedHF:      cL = juce::Colour(0xffe63535); cD = juce::Colour(0xff780f0f); break;
+            case KnobStyle::CyanLMF:    cL = juce::Colour(0xff24a2bc); cD = juce::Colour(0xff0b4d5d); break;
+            case KnobStyle::BrownLF:    cL = juce::Colour(0xff904a1d); cD = juce::Colour(0xff3b1806); break;
         }
-        juce::ColourGradient cap(cL, cx - capR * 0.5f, cy - capR * 0.5f, cD, cx + capR * 0.7f, cy + capR * 0.7f, false);
+        juce::ColourGradient cap(cL, cx - capR * 0.45f, cy - capR * 0.45f, cD, cx + capR * 0.75f, cy + capR * 0.75f, true);
         g.setGradientFill(cap);
         g.fillEllipse(cx - capR, cy - capR, capR * 2.0f, capR * 2.0f);
-        g.setColour(juce::Colours::white.withAlpha(0.28f));
+
+        g.setColour(juce::Colours::white.withAlpha(0.18f));
+        g.fillEllipse(cx - capR * 0.58f, cy - capR * 0.68f, capR * 1.05f, capR * 0.58f);
+        g.setColour(juce::Colour(0xfffffce8).withAlpha(0.42f));
         g.drawEllipse(cx - capR + 0.5f, cy - capR + 0.5f, (capR - 0.5f) * 2.0f, (capR - 0.5f) * 2.0f, 1.0f);
 
         float pa = angle - juce::MathConstants<float>::halfPi;
         g.setColour(ptr);
-        g.drawLine(cx + std::cos(pa) * capR * 0.15f, cy + std::sin(pa) * capR * 0.15f, cx + std::cos(pa) * capR * 0.92f, cy + std::sin(pa) * capR * 0.92f, 2.4f);
+        g.drawLine(cx + std::cos(pa) * capR * 0.14f, cy + std::sin(pa) * capR * 0.14f, cx + std::cos(pa) * capR * 0.92f, cy + std::sin(pa) * capR * 0.92f, 2.5f);
     }
 
     void drawLinearSlider(juce::Graphics& g, int x, int y, int w, int h, float pos, float, float, const juce::Slider::SliderStyle, juce::Slider&) override
     {
         float cx = x + w * 0.5f;
-        juce::Rectangle<float> tr(cx - 3.0f, y + 12.0f, 6.0f, h - 24.0f);
-        g.setColour(juce::Colour(0xff100b06)); g.fillRoundedRectangle(tr, 3.0f);
-        g.setColour(juce::Colour(0xffdfbe76).withAlpha(0.45f)); g.drawRoundedRectangle(tr.expanded(1.0f), 3.0f, 1.0f);
-        juce::Rectangle<float> cap(cx - 14.0f, pos - 22.0f, 28.0f, 44.0f);
-        g.setColour(juce::Colours::black.withAlpha(0.55f)); g.fillRoundedRectangle(cap.translated(2.0f, 4.0f), 3.0f);
-        juce::ColourGradient cg(juce::Colour(0xfff7e5b5), cap.getX(), cap.getY(), juce::Colour(0xff8e6a2e), cap.getX(), cap.getBottom(), false);
-        cg.addColour(0.42, juce::Colour(0xffcaa45b)); cg.addColour(0.50, juce::Colour(0xff523914)); cg.addColour(0.58, juce::Colour(0xfff0d89d));
+        juce::Rectangle<float> tr(cx - 3.5f, y + 12.0f, 7.0f, h - 24.0f);
+        g.setColour(juce::Colour(0xff0d0804)); g.fillRoundedRectangle(tr, 3.0f);
+        g.setColour(juce::Colour(0xffdfbe76).withAlpha(0.5f)); g.drawRoundedRectangle(tr.expanded(1.0f), 3.0f, 1.0f);
+        juce::Rectangle<float> cap(cx - 16.0f, pos - 24.0f, 32.0f, 48.0f);
+        g.setColour(juce::Colours::black.withAlpha(0.62f)); g.fillRoundedRectangle(cap.translated(3.0f, 6.0f), 3.0f);
+        juce::ColourGradient cg(juce::Colour(0xfff9e9ba), cap.getX(), cap.getY(), juce::Colour(0xff8e6a2e), cap.getX(), cap.getBottom(), false);
+        cg.addColour(0.40, juce::Colour(0xffcaa45b)); cg.addColour(0.49, juce::Colour(0xff422c0d)); cg.addColour(0.51, juce::Colour(0xff1e1204)); cg.addColour(0.60, juce::Colour(0xfff2da9e));
         g.setGradientFill(cg); g.fillRoundedRectangle(cap, 3.0f);
-        g.setColour(juce::Colour(0xff3c280c)); g.drawRoundedRectangle(cap, 3.0f, 1.1f);
-        g.setColour(juce::Colour(0xff1f1407)); g.fillRect(cap.getX() + 1.0f, cap.getCentreY() - 1.0f, cap.getWidth() - 2.0f, 2.0f);
+        g.setColour(juce::Colour(0xff382309)); g.drawRoundedRectangle(cap, 3.0f, 1.2f);
+        g.setColour(juce::Colours::white.withAlpha(0.55f)); g.drawHorizontalLine(static_cast<int>(cap.getY() + 1), cap.getX() + 2.f, cap.getRight() - 2.f);
     }
 
     void drawButtonBackground(juce::Graphics& g, juce::Button& b, const juce::Colour&, bool hl, bool down) override
     {
-        auto r = b.getLocalBounds().toFloat().reduced(1.0f);
+        auto r = b.getLocalBounds().toFloat().reduced(1.5f);
         bool on = b.getToggleState(), tb = static_cast<bool>(b.getProperties().getWithDefault("toolbarBtn", false));
         if (tb)
         {
-            auto bg = on ? juce::Colour(0xffa98237) : juce::Colour(0xff2a1f11);
+            auto bg = on ? juce::Colour(0xffb58d3f) : juce::Colour(0xff2a1f11);
             if (hl) bg = bg.brighter(0.15f);
             g.setColour(bg); g.fillRoundedRectangle(r, 3.0f);
             g.setColour(juce::Colour(0xffb99349)); g.drawRoundedRectangle(r, 3.0f, 1.0f);
             return;
         }
-        juce::ColourGradient grad(on ? juce::Colour(0xfffff9e2) : juce::Colour(0xffdec07e), r.getX(), r.getY(),
-                                  on ? juce::Colour(0xffe7c270) : juce::Colour(0xff9c7838), r.getX(), r.getBottom(), false);
+        if (!down) { g.setColour(juce::Colours::black.withAlpha(0.48f)); g.fillRoundedRectangle(r.translated(1.5f, 2.5f), 3.0f); }
+        if (on) { g.setColour(juce::Colour(0xffffd86b).withAlpha(0.32f)); g.fillRoundedRectangle(r.expanded(2.0f), 4.0f); }
+        juce::ColourGradient grad(on ? juce::Colour(0xfffffdef) : juce::Colour(0xffe8ca86), r.getX(), r.getY(),
+                                  on ? juce::Colour(0xffe6c16c) : juce::Colour(0xff9a7634), r.getX(), r.getBottom(), false);
         g.setGradientFill(grad); g.fillRoundedRectangle(r, 3.0f);
-        if (down) { g.setColour(juce::Colours::black.withAlpha(0.18f)); g.fillRoundedRectangle(r, 3.0f); }
-        g.setColour(juce::Colour(0xff38250b)); g.drawRoundedRectangle(r, 3.0f, 1.3f);
-        g.setColour(juce::Colours::white.withAlpha(on ? 0.55f : 0.25f)); g.drawRoundedRectangle(r.reduced(1.0f), 2.2f, 0.8f);
+        if (down) { g.setColour(juce::Colours::black.withAlpha(0.22f)); g.fillRoundedRectangle(r, 3.0f); }
+        g.setColour(juce::Colour(0xff342108)); g.drawRoundedRectangle(r, 3.0f, 1.4f);
+        g.setColour(juce::Colours::white.withAlpha(on ? 0.72f : 0.42f)); g.drawHorizontalLine(static_cast<int>(r.getY() + 1), r.getX() + 2.f, r.getRight() - 2.f);
     }
 
     void drawButtonText(juce::Graphics& g, juce::TextButton& b, bool, bool) override
     {
         bool tb = static_cast<bool>(b.getProperties().getWithDefault("toolbarBtn", false));
+        if (b.getProperties().contains("speakerIcon"))
+        {
+            auto c = b.getLocalBounds().toFloat().getCentre();
+            juce::Path spk;
+            spk.addRectangle(c.x - 8.f, c.y - 3.f, 4.f, 6.f);
+            spk.startNewSubPath(c.x - 4.f, c.y - 3.f); spk.lineTo(c.x + 1.f, c.y - 7.f);
+            spk.lineTo(c.x + 1.f, c.y + 7.f); spk.lineTo(c.x - 4.f, c.y + 3.f); spk.closeSubPath();
+            g.setColour(juce::Colour(0xff2c1b07));
+            g.fillPath(spk);
+            juce::Path w1; w1.addCentredArc(c.x + 2.f, c.y, 4.f, 4.f, 0.f, -0.8f, 0.8f, true);
+            juce::Path w2; w2.addCentredArc(c.x + 2.f, c.y, 7.f, 7.f, 0.f, -0.85f, 0.85f, true);
+            g.strokePath(w1, juce::PathStrokeType(1.4f)); g.strokePath(w2, juce::PathStrokeType(1.4f));
+            return;
+        }
         g.setFont(juce::FontOptions(tb ? 11.5f : 10.5f, juce::Font::bold));
         g.setColour(tb ? (b.getToggleState() ? juce::Colour(0xff181006) : juce::Colour(0xfff4dfaa)) : juce::Colour(0xff2c1b07));
         g.drawFittedText(b.getButtonText(), b.getLocalBounds().reduced(2), juce::Justification::centred, 2);
@@ -382,10 +463,11 @@ public:
 
         auto mkTb = [&](juce::TextButton& b, const juce::String& t) { addAndMakeVisible(b); b.setButtonText(t); b.getProperties().set("toolbarBtn", true); };
         auto mkBt = [&](juce::TextButton& b, const juce::String& t, bool tog = true) { addAndMakeVisible(b); b.setButtonText(t); b.setClickingTogglesState(tog); };
-        auto mkKn = [&](juce::Slider& s, SolarSSL::KnobStyle st, const juce::String& pid) {
+        auto mkKn = [&](juce::Slider& s, SolarSSL::KnobStyle st, const juce::String& pid, const juce::String& ticks = "") {
             addAndMakeVisible(s); s.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
             s.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
             s.getProperties().set("knobStyle", static_cast<int>(st));
+            if (ticks.isNotEmpty()) s.getProperties().set("ticks", ticks);
             s.onDragStart = [this, pid] { proc.setLastTouched(pid); };
         };
 
@@ -406,25 +488,41 @@ public:
         mkTb(redoBtn, "REDO"); redoBtn.onClick = [this] { proc.undoManager.redo(); };
         mkTb(extScBtn, "EXT S/C"); extScBtn.setClickingTogglesState(true);
         mkTb(midiBtn, "MIDI"); midiBtn.setClickingTogglesState(true); midiBtn.onClick = [this] { proc.setMidiLearn(midiBtn.getToggleState()); };
-        addAndMakeVisible(scaleBox);
-        scaleBox.addItem("75%", 75); scaleBox.addItem("100%", 100); scaleBox.addItem("125%", 125); scaleBox.addItem("150%", 150);
-        scaleBox.setSelectedId(100, juce::dontSendNotification);
-        scaleBox.onChange = [this] { float sc = scaleBox.getSelectedId() / 100.0f; setTransform(juce::AffineTransform::scale(sc)); setSize(static_cast<int>(720 * sc), static_cast<int>(950 * sc)); };
 
-        mkKn(lineK, SolarSSL::KnobStyle::FlutedGold, "line_trim"); mkKn(micK, SolarSSL::KnobStyle::FlutedGold, "mic_gain");
+        addAndMakeVisible(scaleBox);
+        scaleBox.addItem("75%", 75); scaleBox.addItem("90%", 90); scaleBox.addItem("100%", 100); scaleBox.addItem("125%", 125); scaleBox.addItem("150%", 150);
+        scaleBox.setSelectedId(75, juce::dontSendNotification);
+        scaleBox.onChange = [this] { applyScale(static_cast<float>(scaleBox.getSelectedId()) / 100.0f); };
+
+        mkKn(lineK, SolarSSL::KnobStyle::FlutedGold, "line_trim", "-20,,0,,+20");
+        mkKn(micK, SolarSSL::KnobStyle::FlutedGold, "mic_gain", "0,,25,,50");
         mkBt(analogB, "ANALOG"); mkBt(padB, "-20dB"); mkBt(phaseB, juce::String::fromUTF8("\xC3\x98"));
         mkBt(dynBypB, "BYP"); mkBt(chOutB, "CH.\nOUT");
-        mkKn(cRatioK, SolarSSL::KnobStyle::WhiteComp, "comp_ratio"); mkKn(cThreshK, SolarSSL::KnobStyle::WhiteComp, "comp_thresh"); mkKn(cRelK, SolarSSL::KnobStyle::WhiteComp, "comp_release"); mkBt(cFatkB, "F.ATK");
-        mkKn(eThreshK, SolarSSL::KnobStyle::GreenExp, "exp_thresh"); mkKn(eRangeK, SolarSSL::KnobStyle::GreenExp, "exp_range"); mkKn(eRelK, SolarSSL::KnobStyle::GreenExp, "exp_release"); mkBt(gateB, "GATE"); mkBt(eFatkB, "F.ATK");
-        mkKn(hpfK, SolarSSL::KnobStyle::FlutedGold, "hpf_freq"); mkKn(lpfK, SolarSSL::KnobStyle::FlutedGold, "lpf_freq"); mkBt(splitB, "SPLIT");
+        mkKn(cRatioK, SolarSSL::KnobStyle::WhiteComp, "comp_ratio", "1,2,3,5,8,20,INF");
+        mkKn(cThreshK, SolarSSL::KnobStyle::WhiteComp, "comp_thresh", "10,5,0,-5,-10,-15,-20");
+        mkKn(cRelK, SolarSSL::KnobStyle::WhiteComp, "comp_release", ".1,.15,.2,.4,1,2,4"); mkBt(cFatkB, "F.ATK");
+        mkKn(eThreshK, SolarSSL::KnobStyle::GreenExp, "exp_thresh", "-30,-20,-12,-4,+10");
+        mkKn(eRangeK, SolarSSL::KnobStyle::GreenExp, "exp_range", "0,6,10,20,35,40");
+        mkKn(eRelK, SolarSSL::KnobStyle::GreenExp, "exp_release", ".1,.15,.2,.4,1,2,4"); mkBt(gateB, "GATE"); mkBt(eFatkB, "F.ATK");
+        mkKn(hpfK, SolarSSL::KnobStyle::FlutedGold, "hpf_freq", "OUT,20,70,120,200,300,350");
+        mkKn(lpfK, SolarSSL::KnobStyle::FlutedGold, "lpf_freq", "OUT,12,8,5,4,3.5,3"); mkBt(splitB, "SPLIT");
 
         mkBt(brownB, "", false); brownB.onClick = [this] { if (auto* pm = proc.apvts.getParameter("eq_type")) pm->setValueNotifyingHost(0.0f); repaint(); };
         mkBt(blackB, "", false); blackB.onClick = [this] { if (auto* pm = proc.apvts.getParameter("eq_type")) pm->setValueNotifyingHost(1.0f); repaint(); };
-        mkBt(soloB, "SOLO"); mkBt(hfBellB, "BELL"); mkKn(hfGainK, SolarSSL::KnobStyle::RedHF, "hf_gain"); mkKn(hfFreqK, SolarSSL::KnobStyle::RedHF, "hf_freq");
-        mkKn(hmfGainK, SolarSSL::KnobStyle::GreenHMF, "hmf_gain"); mkKn(hmfFreqK, SolarSSL::KnobStyle::GreenHMF, "hmf_freq"); mkKn(hmfQK, SolarSSL::KnobStyle::GreenHMF, "hmf_q");
+        mkBt(soloB, ""); soloB.getProperties().set("speakerIcon", true);
+        mkBt(hfBellB, "BELL");
+        mkKn(hfGainK, SolarSSL::KnobStyle::RedHF, "hf_gain", "-15,-9,-3,0,3,9,+15");
+        mkKn(hfFreqK, SolarSSL::KnobStyle::RedHF, "hf_freq", "1.5,2,5,8,10,14,16");
+        mkKn(hmfGainK, SolarSSL::KnobStyle::GreenHMF, "hmf_gain", "-15,-9,-3,0,3,9,+15");
+        mkKn(hmfFreqK, SolarSSL::KnobStyle::GreenHMF, "hmf_freq", ".6,.8,1.5,3,4.5,6,7");
+        mkKn(hmfQK, SolarSSL::KnobStyle::GreenHMF, "hmf_q", "3,2,1.5,1,.5");
         mkBt(eqBypB, "BYP"); mkBt(dynScB, "DYN\nS.C");
-        mkKn(lmfGainK, SolarSSL::KnobStyle::CyanLMF, "lmf_gain"); mkKn(lmfFreqK, SolarSSL::KnobStyle::CyanLMF, "lmf_freq"); mkKn(lmfQK, SolarSSL::KnobStyle::CyanLMF, "lmf_q");
-        mkBt(lfBellB, "BELL"); mkKn(lfGainK, SolarSSL::KnobStyle::BrownLF, "lf_gain"); mkKn(lfFreqK, SolarSSL::KnobStyle::BrownLF, "lf_freq");
+        mkKn(lmfGainK, SolarSSL::KnobStyle::CyanLMF, "lmf_gain", "-15,-9,-3,0,3,9,+15");
+        mkKn(lmfFreqK, SolarSSL::KnobStyle::CyanLMF, "lmf_freq", ".2,.3,.8,1,1.5,2,2.5");
+        mkKn(lmfQK, SolarSSL::KnobStyle::CyanLMF, "lmf_q", "3,2,1.5,1,.5");
+        mkBt(lfBellB, "BELL");
+        mkKn(lfGainK, SolarSSL::KnobStyle::BrownLF, "lf_gain", "-15,-9,-3,0,3,9,+15");
+        mkKn(lfFreqK, SolarSSL::KnobStyle::BrownLF, "lf_freq", "30,50,100,200,300,350,450");
 
         addAndMakeVisible(outFader); outFader.setSliderStyle(juce::Slider::LinearVertical); outFader.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
         mkBt(mInB, "IN", false); mkBt(mOutB, "OUT", false); mOutB.setToggleState(true, juce::dontSendNotification);
@@ -445,11 +543,17 @@ public:
         bAtt("lf_bell", lfBellB); sAtt("lf_gain", lfGainK); sAtt("lf_freq", lfFreqK);
         sAtt("output_gain", outFader); sAtt("width", widthK); bAtt("extra_wide", xWideB); bAtt("width_filter", wFiltB);
 
-        setSize(720, 950);
+        applyScale(0.75f);
         startTimerHz(30);
     }
 
     ~SolarAudioSSLEditor() override { stopTimer(); setLookAndFeel(nullptr); }
+
+    void applyScale(float sc)
+    {
+        setTransform(juce::AffineTransform::scale(sc));
+        setSize(static_cast<int>(std::round(720.0f * sc)), static_cast<int>(std::round(950.0f * sc)));
+    }
 
     void mouseDown(const juce::MouseEvent& e) override
     {
@@ -476,118 +580,141 @@ public:
         undoBtn.setBounds(444,8,44,26); redoBtn.setBounds(491,8,44,26); extScBtn.setBounds(544,8,56,26);
         midiBtn.setBounds(604,8,42,26); scaleBox.setBounds(650,8,62,26);
         const int y = 42;
-        lineK.setBounds(26,y+18,66,66); micK.setBounds(26,y+126,66,66);
-        analogB.setBounds(140,y+18,66,30); padB.setBounds(140,y+62,66,30); phaseB.setBounds(140,y+106,66,30);
-        dynBypB.setBounds(132,y+194,34,46); chOutB.setBounds(170,y+194,36,46);
-        cRatioK.setBounds(26,y+250,68,68); cThreshK.setBounds(134,y+318,68,68); cRelK.setBounds(26,y+382,68,68); cFatkB.setBounds(58,y+462,46,18);
-        eThreshK.setBounds(134,y+444,68,68); eRangeK.setBounds(26,y+498,68,68); gateB.setBounds(140,y+530,64,28); eRelK.setBounds(26,y+618,68,68); eFatkB.setBounds(58,y+698,46,18);
-        hpfK.setBounds(28,y+754,68,68); lpfK.setBounds(136,y+812,68,68); splitB.setBounds(28,y+860,62,30);
-        brownB.setBounds(324,y+32,34,56); blackB.setBounds(362,y+32,34,56); soloB.setBounds(388,y+126,64,30);
-        hfBellB.setBounds(388,y+184,64,30); hfGainK.setBounds(274,y+186,68,68); hfFreqK.setBounds(386,y+256,68,68);
-        hmfGainK.setBounds(274,y+322,68,68); hmfFreqK.setBounds(386,y+384,68,68); hmfQK.setBounds(274,y+448,68,68);
-        eqBypB.setBounds(386,y+496,34,48); dynScB.setBounds(424,y+496,36,48);
-        lmfGainK.setBounds(274,y+556,68,68); lmfFreqK.setBounds(386,y+616,68,68); lmfQK.setBounds(274,y+686,68,68);
-        lfGainK.setBounds(274,y+816,68,68); lfFreqK.setBounds(386,y+754,68,68); lfBellB.setBounds(388,y+858,64,30);
-        outFader.setBounds(526,y+210,44,466); mInB.setBounds(624,y+154,38,30); mOutB.setBounds(664,y+154,38,30);
+        lineK.setBounds(14,y+10,88,88); micK.setBounds(14,y+114,88,88);
+        analogB.setBounds(138,y+18,68,31); padB.setBounds(138,y+62,68,31); phaseB.setBounds(138,y+106,68,31);
+        dynBypB.setBounds(130,y+192,36,52); chOutB.setBounds(170,y+192,36,52);
+        cRatioK.setBounds(14,y+236,88,88); cThreshK.setBounds(124,y+304,88,88); cRelK.setBounds(14,y+364,88,88); cFatkB.setBounds(58,y+462,46,18);
+        eThreshK.setBounds(124,y+426,88,88); eRangeK.setBounds(14,y+482,88,88); gateB.setBounds(138,y+530,66,30); eRelK.setBounds(14,y+602,88,88); eFatkB.setBounds(58,y+698,46,18);
+        hpfK.setBounds(16,y+742,88,88); lpfK.setBounds(126,y+798,88,88); splitB.setBounds(26,y+860,64,31);
+
+        brownB.setBounds(326,y+30,33,58); blackB.setBounds(364,y+30,33,58); soloB.setBounds(388,y+124,66,31);
+        hfBellB.setBounds(388,y+180,66,31); hfGainK.setBounds(262,y+170,88,88); hfFreqK.setBounds(376,y+238,88,88);
+        hmfGainK.setBounds(262,y+306,88,88); hmfFreqK.setBounds(376,y+368,88,88); hmfQK.setBounds(262,y+432,88,88);
+        eqBypB.setBounds(382,y+494,36,52); dynScB.setBounds(422,y+494,36,52);
+        lmfGainK.setBounds(262,y+540,88,88); lmfFreqK.setBounds(376,y+600,88,88); lmfQK.setBounds(262,y+668,88,88);
+        lfGainK.setBounds(262,y+798,88,88); lfFreqK.setBounds(376,y+736,88,88); lfBellB.setBounds(388,y+860,66,31);
+
+        outFader.setBounds(526,y+210,44,466); mInB.setBounds(620,y+152,39,30); mOutB.setBounds(661,y+152,39,30);
         meterRect = {610,y+210,102,466};
-        widthK.setBounds(520,y+754,66,66); xWideB.setBounds(634,y+742,62,32); wFiltB.setBounds(634,y+790,62,32);
+        widthK.setBounds(510,y+742,86,86); xWideB.setBounds(632,y+741,66,34); wFiltB.setBounds(632,y+789,66,34);
     }
 
     void paint(juce::Graphics& g) override
     {
         const int y = 42;
-        g.setColour(juce::Colour(0xff1a130a)); g.fillRect(0, 0, 720, y);
+        g.setColour(juce::Colour(0xff181108)); g.fillRect(0, 0, 720, y);
         g.setColour(juce::Colour(0xffa9823a)); g.drawHorizontalLine(y - 1, 0.0f, 720.0f);
         SolarSSL::SSLLookAndFeel::drawBrushedGoldPanel(g, {0.0f, static_cast<float>(y), 720.0f, 908.0f});
 
         for (float gx : {240.0f, 484.0f}) {
-            g.setColour(juce::Colour(0xff38250b)); g.fillRect(gx - 1.5f, static_cast<float>(y), 2.5f, 908.0f);
-            g.setColour(juce::Colour(0xfff7e6b7).withAlpha(0.55f)); g.drawVerticalLine(static_cast<int>(gx + 1.5f), static_cast<float>(y), 950.0f);
+            g.setColour(juce::Colour(0xff2a1a06)); g.fillRect(gx - 1.5f, static_cast<float>(y), 2.5f, 908.0f);
+            g.setColour(juce::Colour(0xfff9eab9).withAlpha(0.55f)); g.drawVerticalLine(static_cast<int>(gx + 1.5f), static_cast<float>(y), 950.0f);
         }
-        g.setColour(juce::Colour(0xff38250b)); g.drawHorizontalLine(y + 114, 486.0f, 720.0f);
-        SolarSSL::SSLLookAndFeel::drawSunburstLogo(g, {494.0f, static_cast<float>(y + 8), 216.0f, 98.0f});
 
-        auto lbl = [&](const juce::String& t, int x, int ly, int w, int h, float sz = 11.0f, juce::Colour c = juce::Colour(0xfff7e6b5)) {
-            g.setFont(juce::FontOptions(sz, juce::Font::bold));
-            g.setColour(juce::Colour(0xff3b270b).withAlpha(0.65f)); g.drawFittedText(t, x + 1, ly + 1, w, h, juce::Justification::centred, 1);
-            g.setColour(c); g.drawFittedText(t, x, ly, w, h, juce::Justification::centred, 1);
+        g.setColour(juce::Colour(0xfffae8b6).withAlpha(0.58f));
+        g.drawHorizontalLine(y + 226, 8.f, 112.f);
+        juce::Path pL; pL.startNewSubPath(8.f, y + 480.f); pL.lineTo(96.f, y + 480.f); pL.lineTo(128.f, y + 424.f); pL.lineTo(232.f, y + 424.f);
+        g.strokePath(pL, juce::PathStrokeType(1.1f));
+        g.drawHorizontalLine(y + 734, 8.f, 232.f);
+        juce::Path pM1; pM1.startNewSubPath(248.f, y + 282.f); pM1.lineTo(336.f, y + 282.f); pM1.lineTo(372.f, y + 342.f); pM1.lineTo(476.f, y + 342.f);
+        g.strokePath(pM1, juce::PathStrokeType(1.1f));
+        juce::Path pM2; pM2.startNewSubPath(248.f, y + 528.f); pM2.lineTo(336.f, y + 528.f); pM2.lineTo(372.f, y + 586.f); pM2.lineTo(476.f, y + 586.f);
+        g.strokePath(pM2, juce::PathStrokeType(1.1f));
+        g.drawHorizontalLine(y + 782, 248.f, 476.f);
+
+        g.setColour(juce::Colour(0xff2e1c07)); g.drawHorizontalLine(y + 116, 486.0f, 720.0f);
+        g.setColour(juce::Colour(0xfff9eab9).withAlpha(0.5f)); g.drawHorizontalLine(y + 117, 486.0f, 720.0f);
+        SolarSSL::SSLLookAndFeel::drawSunburstLogo(g, {492.0f, static_cast<float>(y + 10), 220.0f, 98.0f});
+
+        auto lbl = [&](const juce::String& t, int x, int ly, int w, int h, float sz = 11.0f, bool dark = false) {
+            SolarSSL::SSLLookAndFeel::drawEmbossedText(g, t, {x, ly, w, h}, sz, dark ? juce::Colour(0xff4c320f) : juce::Colour(0xfffaebbd), dark);
         };
         auto fmt = [](float db) { if (db <= -47.9f) return juce::String("-inf"); std::ostringstream o; o << std::fixed << std::setprecision(1) << db; return juce::String(o.str()); };
 
-        lbl("LINE",26,y+84,66,16,11.f,juce::Colour(0xff4a3210)); lbl("MIC",26,y+194,66,16,11.f,juce::Colour(0xff4a3210));
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {120.f,y+27.f,12.f,12.f}, juce::Colour(0xffffbe3b), analogB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {120.f,y+71.f,12.f,12.f}, juce::Colour(0xffffbe3b), padB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {120.f,y+115.f,12.f,12.f}, juce::Colour(0xffe6392e), phaseB.getToggleState());
+        lbl("LINE",22,y+96,72,16,10.5f,true); lbl("MIC",22,y+200,72,16,10.5f,true);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {118.f,y+27.f,11.f,11.f}, juce::Colour(0xffffbe3b), analogB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {118.f,y+71.f,11.f,11.f}, juce::Colour(0xffffbe3b), padB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {118.f,y+115.f,11.f,11.f}, juce::Colour(0xffe6392e), phaseB.getToggleState());
 
-        g.setColour(juce::Colour(0xfff5e2b1).withAlpha(0.65f)); g.drawRoundedRectangle(124.f,y+178.f,90.f,90.f,3.f,1.f);
-        lbl("DYN TO",136,y+168,66,16,10.5f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {143.f,y+247.f,11.f,11.f}, juce::Colour(0xffe6392e), dynBypB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {182.f,y+247.f,11.f,11.f}, juce::Colour(0xffffbe3b), chOutB.getToggleState());
+        g.setColour(juce::Colour(0xfff5e2b1).withAlpha(0.65f)); g.drawRoundedRectangle(122.f,y+174.f,92.f,102.f,3.f,1.2f);
+        lbl("DYN TO",136,y+167,64,15,10.5f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {142.f,y+251.f,11.f,11.f}, juce::Colour(0xffe6392e), dynBypB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {182.f,y+251.f,11.f,11.f}, juce::Colour(0xffffbe3b), chOutB.getToggleState());
 
-        lbl("RATIO",26,y+320,68,16,10.5f); lbl("COMPRESS",16,y+348,96,18,12.5f); lbl("THRESHOLD",122,y+388,92,16,10.5f); lbl("RELEASE",24,y+448,72,16,10.5f);
-        lbl("THRESHOLD",122,y+512,92,16,10.5f); lbl("RANGE",26,y+566,68,16,10.5f); lbl("EXPAND",18,y+592,86,18,12.5f); lbl("RELEASE",24,y+684,72,16,10.5f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {121.f,y+538.f,12.f,12.f}, juce::Colour(0xffffbe3b), gateB.getToggleState());
+        lbl("RATIO",22,y+322,72,15,10.f); lbl("COMPRESS",12,y+346,96,18,13.f); lbl("THRESHOLD",122,y+391,92,15,10.f); lbl("RELEASE",22,y+449,72,15,10.f);
+        lbl("THRESHOLD",122,y+511,92,15,10.f); lbl("RANGE",22,y+567,72,15,10.f); lbl("EXPAND",14,y+592,88,18,13.f); lbl("RELEASE",22,y+686,72,15,10.f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {118.f,y+539.f,11.f,11.f}, juce::Colour(0xffffbe3b), gateB.getToggleState());
 
-        juce::Rectangle<float> gr(132.f, y+576.f, 76.f, 152.f);
-        g.setColour(juce::Colour(0xff2c1f0e).withAlpha(0.75f)); g.fillRoundedRectangle(gr, 4.f);
-        g.setColour(juce::Colour(0xffefd79d).withAlpha(0.65f)); g.drawRoundedRectangle(gr, 4.f, 1.f);
+        juce::Rectangle<float> gr(130.f, y+576.f, 78.f, 152.f);
+        g.setColour(juce::Colour(0xff24180a).withAlpha(0.84f)); g.fillRoundedRectangle(gr, 4.f);
+        g.setColour(juce::Colour(0xffefd79d).withAlpha(0.65f)); g.drawRoundedRectangle(gr, 4.f, 1.2f);
         const float th[5] = {20.f, 14.f, 10.f, 6.f, 3.f};
         for (int i = 0; i < 5; ++i) {
             float ly = gr.getY() + 14.f + i * 28.f;
-            SolarSSL::SSLLookAndFeel::drawJewelLED(g, {gr.getX()+10.f,ly,13.f,13.f}, juce::Colour(0xff4cd94c), gGr >= th[i]);
+            SolarSSL::SSLLookAndFeel::drawJewelLED(g, {gr.getX()+10.f,ly,12.f,12.f}, juce::Colour(0xff4cd94c), gGr >= th[i]);
             lbl(juce::String(static_cast<int>(th[i])), static_cast<int>(gr.getX()+26), static_cast<int>(ly-1), 24, 15, 10.f);
-            SolarSSL::SSLLookAndFeel::drawJewelLED(g, {gr.getRight()-23.f,ly,13.f,13.f}, i <= 1 ? juce::Colour(0xffe6392e) : juce::Colour(0xffffcc33), cGr >= th[i]);
+            SolarSSL::SSLLookAndFeel::drawJewelLED(g, {gr.getRight()-22.f,ly,12.f,12.f}, i <= 1 ? juce::Colour(0xffe6392e) : juce::Colour(0xffffcc33), cGr >= th[i]);
         }
 
-        lbl("FILTERS",132,y+772,78,18,12.f); lbl("Hz",44,y+826,36,15,10.5f); lbl("kHz",152,y+882,36,15,10.5f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {20.f,y+828.f,10.f,10.f}, juce::Colour(0xff5ce640), proc.apvts.getRawParameterValue("hpf_freq")->load() > 17.f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {130.f,y+884.f,10.f,10.f}, juce::Colour(0xff5ce640), proc.apvts.getRawParameterValue("lpf_freq")->load() < 21800.f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {12.f,y+870.f,10.f,10.f}, juce::Colour(0xffffbe3b), splitB.getToggleState());
+        lbl("FILTERS",130,y+766,82,18,12.5f); lbl("Hz",44,y+830,36,15,10.f); lbl("kHz",152,y+885,36,15,10.f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {20.f,y+831.f,10.f,10.f}, juce::Colour(0xff5ce640), proc.apvts.getRawParameterValue("hpf_freq")->load() > 17.f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {130.f,y+886.f,10.f,10.f}, juce::Colour(0xff5ce640), proc.apvts.getRawParameterValue("lpf_freq")->load() < 21800.f);
 
-        g.setColour(juce::Colour(0xff5a3f17).withAlpha(0.6f)); g.drawRoundedRectangle(254.f,y+14.f,214.f,92.f,3.f,1.f);
-        lbl("EQ TYPE",320,y+6,82,16,11.5f,juce::Colour(0xff4a3210));
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {334.f,y+64.f,14.f,14.f}, juce::Colour(0xffc96b1f), brownB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {372.f,y+64.f,14.f,14.f}, juce::Colour(0xff201a14), true);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {260.f,y+134.f,11.f,11.f}, juce::Colour(0xffe6392e), !eqBypB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {370.f,y+134.f,11.f,11.f}, juce::Colour(0xffffbe3b), soloB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {370.f,y+193.f,11.f,11.f}, juce::Colour(0xffffbe3b), hfBellB.getToggleState());
-        lbl("HF",344,y+256,36,18,12.5f); lbl("dB",292,y+252,32,15,10.f); lbl("kHz",404,y+324,34,15,10.f);
-        lbl("HMF",336,y+410,44,18,12.5f); lbl("dB",292,y+388,32,15,10.f); lbl("kHz",404,y+452,34,15,10.f); lbl("Q",292,y+514,32,15,10.f);
-        g.setColour(juce::Colour(0xfff5e2b1).withAlpha(0.65f)); g.drawRoundedRectangle(378.f,y+480.f,90.f,92.f,3.f,1.f);
-        lbl("EQ TO",390,y+470,66,16,10.5f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {397.f,y+551.f,11.f,11.f}, juce::Colour(0xffe6392e), eqBypB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {436.f,y+551.f,11.f,11.f}, juce::Colour(0xffffbe3b), dynScB.getToggleState());
-        lbl("LMF",336,y+644,44,18,12.5f); lbl("dB",292,y+622,32,15,10.f); lbl("kHz",404,y+684,34,15,10.f); lbl("Q",292,y+752,32,15,10.f);
-        lbl("LF",344,y+812,36,18,12.5f); lbl("Hz",404,y+822,34,15,10.f); lbl("dB",292,y+882,32,15,10.f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {370.f,y+867.f,11.f,11.f}, juce::Colour(0xffffbe3b), lfBellB.getToggleState());
+        g.setColour(juce::Colour(0xff5a3f17).withAlpha(0.65f)); g.drawRoundedRectangle(254.f,y+14.f,216.f,90.f,3.f,1.2f);
+        lbl("EQ TYPE",318,y+6,88,16,12.f,true);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {335.f,y+64.f,14.f,14.f}, juce::Colour(0xffc96b1f), brownB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {373.f,y+64.f,14.f,14.f}, juce::Colour(0xff201a14), true);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {260.f,y+133.f,11.f,11.f}, juce::Colour(0xffe6392e), !eqBypB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {368.f,y+133.f,11.f,11.f}, juce::Colour(0xffffbe3b), soloB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {368.f,y+189.f,11.f,11.f}, juce::Colour(0xffffbe3b), hfBellB.getToggleState());
 
-        lbl("OUTPUT",510,y+162,76,18,13.f); lbl("METER",622,y+130,80,18,12.5f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {637.f,y+190.f,11.f,11.f}, juce::Colour(0xffffbe3b), showInMeter);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {677.f,y+190.f,11.f,11.f}, juce::Colour(0xffffbe3b), !showInMeter);
+        lbl("HF",342,y+256,36,18,13.f); lbl("dB",288,y+256,36,14,10.f); lbl("kHz",402,y+325,38,14,10.f);
+        lbl("HMF",322,y+418,46,18,13.f); lbl("dB",288,y+390,36,14,10.f); lbl("kHz",402,y+454,38,14,10.f); lbl("Q",288,y+514,36,14,10.f);
+        g.setColour(juce::Colour(0xfff5e2b1).withAlpha(0.65f)); g.drawRoundedRectangle(374.f,y+478.f,92.f,102.f,3.f,1.2f);
+        lbl("EQ TO",388,y+471,64,15,10.5f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {394.f,y+555.f,11.f,11.f}, juce::Colour(0xffe6392e), eqBypB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {434.f,y+555.f,11.f,11.f}, juce::Colour(0xffffbe3b), dynScB.getToggleState());
+        lbl("LMF",322,y+652,46,18,13.f); lbl("dB",288,y+623,36,14,10.f); lbl("kHz",402,y+687,38,14,10.f); lbl("Q",288,y+753,36,14,10.f);
+        lbl("LF",342,y+812,36,18,13.f); lbl("Hz",402,y+824,38,14,10.f); lbl("dB",288,y+886,36,14,10.f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {368.f,y+870.f,11.f,11.f}, juce::Colour(0xffffbe3b), lfBellB.getToggleState());
+
+        lbl("OUTPUT",510,y+162,76,18,13.5f); lbl("METER",620,y+130,82,18,13.f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {634.f,y+188.f,11.f,11.f}, juce::Colour(0xffffbe3b), showInMeter);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {675.f,y+188.f,11.f,11.f}, juce::Colour(0xffffbe3b), !showInMeter);
         const char* ft[11] = {"12","6","0","6","12","16","24","30","36","42","48"};
-        for (int i = 0; i < 11; ++i) { lbl(ft[i],498,y+228+i*42,24,14,9.5f); lbl(ft[i],572,y+228+i*42,24,14,9.5f); }
-        lbl(fmt(proc.apvts.getRawParameterValue("output_gain")->load()), 520, y+694, 56, 18, 12.f);
+        for (int i = 0; i < 11; ++i) { lbl(ft[i],498,y+228+i*41,24,14,9.5f); lbl(ft[i],572,y+228+i*41,24,14,9.5f); }
+
+        auto drawReadoutBox = [&](const juce::String& v, int rx) {
+            juce::Rectangle<float> rb(static_cast<float>(rx), static_cast<float>(y + 691), 46.f, 19.f);
+            g.setColour(juce::Colour(0xff473011)); g.fillRoundedRectangle(rb, 2.f);
+            g.setColour(juce::Colour(0xfff5e2b0).withAlpha(0.32f)); g.drawRoundedRectangle(rb, 2.f, 0.8f);
+            lbl(v, rx, y + 691, 46, 19, 12.f);
+        };
+        drawReadoutBox(fmt(proc.apvts.getRawParameterValue("output_gain")->load()), 525);
 
         auto bar = [&](juce::Rectangle<float> b, float lin) {
             g.setColour(juce::Colour(0xff140d06)); g.fillRoundedRectangle(b, 2.f);
-            g.setColour(juce::Colour(0xffd7b66d).withAlpha(0.5f)); g.drawRoundedRectangle(b, 2.f, 1.f);
+            g.setColour(juce::Colour(0xffd7b66d).withAlpha(0.55f)); g.drawRoundedRectangle(b, 2.f, 1.f);
             float fh = b.getHeight() * ((SolarSSL::clampf(SolarSSL::gainToDb(lin), -48.f, 6.f) + 48.f) / 54.f);
             if (fh > 1.f) {
                 auto fr = b.withTop(b.getBottom() - fh).reduced(1.5f, 1.f);
-                juce::ColourGradient mg(juce::Colour(0xffffd447), fr.getX(), fr.getY(), juce::Colour(0xffcc4e08), fr.getX(), fr.getBottom(), false);
-                mg.addColour(0.35, juce::Colour(0xffff9a1f)); g.setGradientFill(mg); g.fillRect(fr);
+                juce::ColourGradient mg(juce::Colour(0xffffe066), fr.getX(), fr.getY(), juce::Colour(0xffb53d05), fr.getX(), fr.getBottom(), false);
+                mg.addColour(0.35, juce::Colour(0xffffad26)); g.setGradientFill(mg); g.fillRect(fr);
             }
+            g.setColour(juce::Colour(0xff140d06).withAlpha(0.36f));
+            for (float sy = b.getY() + 4.f; sy < b.getBottom(); sy += 6.f) g.drawHorizontalLine(static_cast<int>(sy), b.getX() + 1.f, b.getRight() - 1.f);
         };
-        bar({612.f,y+216.f,18.f,456.f}, mL); bar({690.f,y+216.f,18.f,456.f}, mR);
+        bar({610.f,y+214.f,19.f,462.f}, mL); bar({688.f,y+214.f,19.f,462.f}, mR);
         const char* ms[12] = {"16","12","8","4","0","4","8","12","16","20","26","36"};
-        for (int i = 0; i < 12; ++i) lbl(ms[i], 644, y+222+i*39, 32, 14, 9.5f);
-        lbl(fmt(peakL), 602, y+694, 48, 18, 11.5f); lbl(fmt(peakR), 672, y+694, 48, 18, 11.5f);
+        for (int i = 0; i < 12; ++i) lbl(ms[i], 642, y+222+i*38, 34, 14, 9.5f);
+        drawReadoutBox(fmt(peakL), 600); drawReadoutBox(fmt(peakR), 670);
 
-        g.setColour(juce::Colour(0xff38250b)); g.drawHorizontalLine(y + 726, 486.f, 720.f);
-        lbl("MONO",522,y+736,62,15,10.f); lbl("STNDRD",494,y+822,54,15,10.f); lbl("REV",564,y+822,36,15,10.f); lbl("WIDTH",630,y+830,70,16,11.5f);
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {614.f,y+752.f,12.f,12.f}, juce::Colour(0xffffbe3b), xWideB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {614.f,y+800.f,12.f,12.f}, juce::Colour(0xffffbe3b), wFiltB.getToggleState());
-        SolarSSL::SSLLookAndFeel::drawEV2Badge(g, {606.f,y+868.f,96.f,30.f});
+        g.setColour(juce::Colour(0xff2e1c07)); g.drawHorizontalLine(y + 724, 486.f, 720.f);
+        g.setColour(juce::Colour(0xfff9eab9).withAlpha(0.45f)); g.drawHorizontalLine(y + 725, 486.f, 720.f);
+        lbl("MONO",522,y+734,62,15,10.f); lbl("STNDRD",492,y+824,54,15,10.f); lbl("REV",562,y+824,36,15,10.f); lbl("WIDTH",630,y+832,70,16,12.5f);
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {612.f,y+753.f,11.f,11.f}, juce::Colour(0xffffbe3b), xWideB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawJewelLED(g, {612.f,y+801.f,11.f,11.f}, juce::Colour(0xffffbe3b), wFiltB.getToggleState());
+        SolarSSL::SSLLookAndFeel::drawEV2Badge(g, {606.f,y+868.f,98.f,30.f});
     }
 
 private:
